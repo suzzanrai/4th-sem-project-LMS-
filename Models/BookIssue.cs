@@ -22,6 +22,6 @@ public class BookIssue
     public decimal FineAmount { get; set; } = 0;
     
     //Navigation 
-    public virtual Book Book { get; set; } = null!;
+    public virtual Books Books { get; set; } = null!;
     public virtual Student Student { get; set; } = null!;
 }

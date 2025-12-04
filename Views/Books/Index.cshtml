@@ -1,0 +1,45 @@
+@model IEnumerable<Practice_Project.Models.Books>
+
+@{
+    ViewData["Title"] = "Books List";
+}
+
+<h2>Books List</h2>
+<hr />
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Add New Book</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+    <tr>
+        <th>Title</th>
+        <th>ISBN</th>
+        <th>Author</th>
+        <th>Category</th>
+        <th>Publication Year</th>
+        <th>Available</th>
+        <th>Total</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var book in Model)
+    {
+        <tr>
+            <td>@book.Title</td>
+            <td>@book.ISBN</td>
+            <td>@book.Author.Name</td>
+            <td>@book.Category.Name</td>
+            <td>@book.PublicationYear</td>
+            <td>@book.QuantityAvailable</td>
+            <td>@book.TotalQuantity</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@book.BookId" class="btn btn-primary btn-sm">Edit</a>
+                <a asp-action="Delete" asp-route-id="@book.BookId" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

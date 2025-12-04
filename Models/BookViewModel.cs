@@ -4,7 +4,7 @@ namespace Practice_Project.Models;
 
 public class BookViewModel
 {
-    public Book Book { get; set; }
+    public Books Books { get; set; }
     
     public IEnumerable<SelectListItem> Authors { get; set; }
     

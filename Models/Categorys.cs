@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Practice_Project.Models;
 
-public class Category
+public class Categorys
 {
     [Key]
     public int CategoryId { get; set; }
@@ -13,7 +13,7 @@ public class Category
     public string? Description { get; set; }
     
     // Navigation
-    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
+    public virtual ICollection<Books> Books { get; set; } = new List<Books>();
     
 
 }

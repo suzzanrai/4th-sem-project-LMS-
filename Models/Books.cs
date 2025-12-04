@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Practice_Project.Models;
 
-public class Book
+public class Books
 {
     [Key]
     public int BookId { get; set; }
@@ -24,8 +25,9 @@ public class Book
     public int CategoryId { get; set; }
     
     //Navigation Properties
-    public virtual Author Author { get; set; } = null!;
-    public virtual Category Category { get; set; } = null!;
-    public virtual ICollection<BookIssue> BookIssues { get; set; } = new List<BookIssue>();
+    public virtual Authors Author { get; set; } = null!;
+    public virtual Categorys Category { get; set; } = null!;
+    public virtual ICollection<BookIssue> BookIssue { get; set; } = new List<BookIssue>();
 
+   
 }

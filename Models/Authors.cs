@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Practice_Project.Models;
 
-public class Author
+public class Authors
 {
     [Key]
     public int AuthorId { get; set; }
@@ -14,6 +14,6 @@ public class Author
     public string? Biography { get; set; }
     
     //Navigation
-    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
+    public virtual ICollection<Books> Books { get; set; } = new List<Books>();
     
 }
