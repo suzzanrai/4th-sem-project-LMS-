@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Practice_Project.Migrations
 {
     /// <inheritdoc />
-    public partial class LSM : Migration
+    public partial class SZn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,7 +68,7 @@ namespace Practice_Project.Migrations
                     PublicationYear = table.Column<int>(type: "integer", nullable: false),
                     TotalQuantity = table.Column<int>(type: "integer", nullable: false),
                     QuantityAvailable = table.Column<int>(type: "integer", nullable: false),
-                    PublicationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PublicationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     AuthorId = table.Column<int>(type: "integer", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -101,14 +101,15 @@ namespace Practice_Project.Migrations
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    FineAmount = table.Column<decimal>(type: "numeric", nullable: false)
+                    FineAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    BooksBookId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BookIssues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookIssues_Books_BookId",
-                        column: x => x.BookId,
+                        name: "FK_BookIssues_Books_BooksBookId",
+                        column: x => x.BooksBookId,
                         principalTable: "Books",
                         principalColumn: "BookId",
                         onDelete: ReferentialAction.Cascade);
@@ -144,9 +145,9 @@ namespace Practice_Project.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookIssues_BookId",
+                name: "IX_BookIssues_BooksBookId",
                 table: "BookIssues",
-                column: "BookId");
+                column: "BooksBookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookIssues_StudentId",

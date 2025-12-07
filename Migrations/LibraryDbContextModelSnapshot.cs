@@ -22,7 +22,7 @@ namespace Practice_Project.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Practice_Project.Models.Author", b =>
+            modelBuilder.Entity("Practice_Project.Models.Authors", b =>
                 {
                     b.Property<int>("AuthorId")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,49 @@ namespace Practice_Project.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("Practice_Project.Models.Book", b =>
+            modelBuilder.Entity("Practice_Project.Models.BookIssue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BooksBookId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("FineAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ReturnDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BooksBookId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("BookIssues");
+                });
+
+            modelBuilder.Entity("Practice_Project.Models.Books", b =>
                 {
                     b.Property<int>("BookId")
                         .ValueGeneratedOnAdd()
@@ -62,7 +104,7 @@ namespace Practice_Project.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("character varying(13)");
 
-                    b.Property<DateTime>("PublicationDate")
+                    b.Property<DateTime?>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PublicationYear")
@@ -88,46 +130,7 @@ namespace Practice_Project.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Practice_Project.Models.BookIssue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("FineAmount")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("IssueDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("BookIssues");
-                });
-
-            modelBuilder.Entity("Practice_Project.Models.Category", b =>
+            modelBuilder.Entity("Practice_Project.Models.Categorys", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -209,30 +212,11 @@ namespace Practice_Project.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("Practice_Project.Models.Book", b =>
-                {
-                    b.HasOne("Practice_Project.Models.Author", "Author")
-                        .WithMany("Books")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Practice_Project.Models.Category", "Category")
-                        .WithMany("Books")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Practice_Project.Models.BookIssue", b =>
                 {
-                    b.HasOne("Practice_Project.Models.Book", "Book")
+                    b.HasOne("Practice_Project.Models.Books", "Books")
                         .WithMany("BookIssues")
-                        .HasForeignKey("BookId")
+                        .HasForeignKey("BooksBookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -242,9 +226,28 @@ namespace Practice_Project.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Book");
+                    b.Navigation("Books");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Practice_Project.Models.Books", b =>
+                {
+                    b.HasOne("Practice_Project.Models.Authors", "Author")
+                        .WithMany("Books")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Practice_Project.Models.Categorys", "Category")
+                        .WithMany("Books")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Practice_Project.Models.Fine", b =>
@@ -258,17 +261,17 @@ namespace Practice_Project.Migrations
                     b.Navigation("BookIssue");
                 });
 
-            modelBuilder.Entity("Practice_Project.Models.Author", b =>
+            modelBuilder.Entity("Practice_Project.Models.Authors", b =>
                 {
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("Practice_Project.Models.Book", b =>
+            modelBuilder.Entity("Practice_Project.Models.Books", b =>
                 {
                     b.Navigation("BookIssues");
                 });
 
-            modelBuilder.Entity("Practice_Project.Models.Category", b =>
+            modelBuilder.Entity("Practice_Project.Models.Categorys", b =>
                 {
                     b.Navigation("Books");
                 });

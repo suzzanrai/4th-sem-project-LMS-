@@ -32,4 +32,8 @@
       <Folder Include="Pages\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Book\Create.cshtml" />
+    </ItemGroup>
+
 </Project>
