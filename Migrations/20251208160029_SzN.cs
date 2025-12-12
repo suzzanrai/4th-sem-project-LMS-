@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Practice_Project.Migrations
 {
     /// <inheritdoc />
-    public partial class SZn : Migration
+    public partial class SzN : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,10 +46,10 @@ namespace Practice_Project.Migrations
                 {
                     StudentId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Phone = table.Column<string>(type: "text", nullable: true),
-                    RollNumber = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    RollNumber = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -63,12 +63,13 @@ namespace Practice_Project.Migrations
                 {
                     BookId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ISBN = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
                     PublicationYear = table.Column<int>(type: "integer", nullable: false),
                     TotalQuantity = table.Column<int>(type: "integer", nullable: false),
                     QuantityAvailable = table.Column<int>(type: "integer", nullable: false),
                     PublicationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     AuthorId = table.Column<int>(type: "integer", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -100,54 +101,59 @@ namespace Practice_Project.Migrations
                     IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    FineAmount = table.Column<decimal>(type: "numeric", nullable: false),
-                    BooksBookId = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    FineAmount = table.Column<decimal>(type: "numeric(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BookIssues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookIssues_Books_BooksBookId",
-                        column: x => x.BooksBookId,
+                        name: "FK_BookIssues_Books_BookId",
+                        column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "BookId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BookIssues_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "StudentId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Fines",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    FineId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     BookIssueId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     GeneratedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PaidDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsPaid = table.Column<bool>(type: "boolean", nullable: false)
+                    IsPaid = table.Column<bool>(type: "boolean", nullable: false),
+                    BookIssueId1 = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fines", x => x.Id);
+                    table.PrimaryKey("PK_Fines", x => x.FineId);
                     table.ForeignKey(
                         name: "FK_Fines_BookIssues_BookIssueId",
                         column: x => x.BookIssueId,
                         principalTable: "BookIssues",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Fines_BookIssues_BookIssueId1",
+                        column: x => x.BookIssueId1,
+                        principalTable: "BookIssues",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookIssues_BooksBookId",
+                name: "IX_BookIssues_BookId",
                 table: "BookIssues",
-                column: "BooksBookId");
+                column: "BookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookIssues_StudentId",
@@ -168,6 +174,12 @@ namespace Practice_Project.Migrations
                 name: "IX_Fines_BookIssueId",
                 table: "Fines",
                 column: "BookIssueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Fines_BookIssueId1",
+                table: "Fines",
+                column: "BookIssueId1",
+                unique: true);
         }
 
         /// <inheritdoc />

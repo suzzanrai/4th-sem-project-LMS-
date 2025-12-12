@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Practice_Project.Models;
 
-public class BookIssue
+public class BookIssueViewModel
 {
     [Key]
     public int Id { get; set; }
@@ -22,6 +22,6 @@ public class BookIssue
     public decimal FineAmount { get; set; } = 0;
     
     //Navigation 
-    public virtual Books Books { get; set; } = null!;
-    public virtual Student Student { get; set; } = null!;
+    public virtual BookViewModel Bookvm { get; set; } = null!;
+    public virtual StudentVm StudentVm { get; set; } = null!;
 }

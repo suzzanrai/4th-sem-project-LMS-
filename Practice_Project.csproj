@@ -29,11 +29,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Pages\" />
+      <_ContentIncludedByDefault Remove="Views\Book\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Authors\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Authors\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Authors\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Authors\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\BookViewModel\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\BookViewModel\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\Book\Create.cshtml" />
+      <Folder Include="Pages\" />
     </ItemGroup>
 
 </Project>

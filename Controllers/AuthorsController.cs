@@ -1,7 +1,10 @@
 
-    using Microsoft.AspNetCore.Mvc;
+    
+// Controllers/AuthorsController.cs
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Practice_Project.Data;
+using Practice_Project.Entities;
 using Practice_Project.Models;
 
 namespace Practice_Project.Controllers
@@ -15,33 +18,42 @@ namespace Practice_Project.Controllers
             _context = context;
         }
 
-        // GET: Authors
+        // GET: Authors → List all authors (with book count)
         public async Task<IActionResult> Index()
         {
-            var authors = await _context.Authors.ToListAsync();
-            return View(authors);
-        }
+            var authors = await _context.Authors
+                .Include(a => a.Books)           // Needed for @author.Books.Count in Index view
+                .OrderBy(a => a.Name)
+                .ToListAsync();
 
-      
+            return View(authors); // Returns List<Author> → matches your Index.cshtml
+        }
 
         // GET: Authors/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new AuthorViewModel());
         }
 
         // POST: Authors/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Authors authors)
+        public async Task<IActionResult> Create(AuthorViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(authors);
+                var author = new Author
+                {
+                    Name = model.Name,
+                    Biography = model.Biography
+                };
+
+                _context.Authors.Add(author);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(authors);
+
+            return View(model);
         }
 
         // GET: Authors/Edit/5
@@ -52,42 +64,57 @@ namespace Practice_Project.Controllers
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return NotFound();
 
-            return View(author);
+            var model = new AuthorViewModel
+            {
+                AuthorId = author.AuthorId,
+                Name = author.Name,
+                Biography = author.Biography
+            };
+
+            return View(model);
         }
 
         // POST: Authors/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Authors authors)
+        public async Task<IActionResult> Edit(int id, AuthorViewModel model)
         {
-            if (id != authors.AuthorId) return NotFound();
+            if (id != model.AuthorId) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(authors);
+                    var author = await _context.Authors.FindAsync(id);
+                    if (author == null) return NotFound();
+
+                    author.Name = model.Name;
+                    author.Biography = model.Biography;
+
+                    _context.Update(author);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AuthorExists(authors.AuthorId))
-                        return NotFound();
-
+                    if (!AuthorExists(id)) return NotFound();
                     throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(authors);
+
+            return View(model);
         }
 
+        // GET: Authors/Delete/5
         // GET: Authors/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
             var author = await _context.Authors
-                .FirstOrDefaultAsync(a => a.AuthorId == id);
+                .Include(a => a.Books)                 // ← THIS LINE IS MISSING!
+                .FirstOrDefaultAsync(m => m.AuthorId == id);
 
             if (author == null) return NotFound();
 
@@ -105,13 +132,13 @@ namespace Practice_Project.Controllers
                 _context.Authors.Remove(author);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool AuthorExists(int id)
         {
-            return _context.Authors.Any(a => a.AuthorId == id);
+            return _context.Authors.Any(e => e.AuthorId == id);
         }
     }
 }
-

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Practice_Project.Models;
 
-public class Fine
+public class FineVm
 {
     [Key]
     public int Id { get; set; }
@@ -18,5 +18,5 @@ public class Fine
     public bool IsPaid { get; set; } = false;
 
     // Navigation
-    public virtual BookIssue BookIssue { get; set; } = null!;
+    public virtual BookIssueViewModel BookIssueViewModel { get; set; } = null!;
 }

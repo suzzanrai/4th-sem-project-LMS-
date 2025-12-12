@@ -1,28 +1,53 @@
-@model Practice_Project.Models.Authors
-<h2>Edit Author</h2>
-<hr />
+<!-- Views/Authors/Create.cshtml  (and Edit.cshtml – just change title) -->
+@model Practice_Project.Models.AuthorViewModel
 
-<form asp-action="Edit" method="post">
+@{
+    ViewData["Title"] = ViewBag.Title ?? "Create Author";
+}
 
-    <input type="hidden" asp-for="AuthorId" />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-add"></i> @ViewData["Title"]
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <form asp-action="@(ViewContext.RouteData.Values["action"])" method="post">
+                        @if (ViewContext.RouteData.Values["action"].ToString() == "Edit")
+                        {
+                            <input type="hidden" asp-for="AuthorId" />
+                        }
 
-    <div class="form-group mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold"></label>
+                            <input asp-for="Name" class="form-control form-control-lg" placeholder="Enter author name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Biography" class="form-label fw-bold">Biography (Optional)</label>
+                            <textarea asp-for="Biography" class="form-control" rows="5" placeholder="Write something about the author..."></textarea>
+                            <span asp-validation-for="Biography" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg me-md-3">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Save Author
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Biography" class="form-label"></label>
-        <textarea asp-for="Biography" class="form-control"></textarea>
-        <span asp-validation-for="Biography" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-
-</form>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

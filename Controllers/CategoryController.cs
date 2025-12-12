@@ -1,6 +1,8 @@
+// Controllers/CategoriesController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Practice_Project.Data;
+using Practice_Project.Entities;
 using Practice_Project.Models;
 
 namespace Practice_Project.Controllers
@@ -9,36 +11,39 @@ namespace Practice_Project.Controllers
     {
         private readonly LibraryDbContext _context;
 
-        public CategoriesController(LibraryDbContext context)
-        {
-            _context = context;
-        }
+        public CategoriesController(LibraryDbContext context) => _context = context;
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _context.Categories
+                .Include(c => c.Books)           // For book count in Index & Delete
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
             return View(categories);
         }
 
         // GET: Categories/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View(new CategoryViewModel());
 
         // POST: Categories/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Categorys categorys)
+        public async Task<IActionResult> Create(CategoryViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(categorys);
+                var category = new Category
+                {
+                    Name = model.Name,
+                    Description = model.Description
+                };
+                _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(categorys);
+            return View(model);
         }
 
         // GET: Categories/Edit/5
@@ -49,32 +54,33 @@ namespace Practice_Project.Controllers
             var category = await _context.Categories.FindAsync(id);
             if (category == null) return NotFound();
 
-            return View(category);
+            var model = new CategoryViewModel
+            {
+                CategoryId = category.CategoryId,   // ← Critical fix!
+                Name = category.Name,
+                Description = category.Description
+            };
+            return View(model);
         }
 
         // POST: Categories/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Categorys categorys)
+        public async Task<IActionResult> Edit(int id, CategoryViewModel model)
         {
-            if (id != categorys.CategoryId) return NotFound();
+            if (id != model.CategoryId) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(categorys);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoryExists(categorys.CategoryId))
-                        return NotFound();
-                    throw;
-                }
+                var category = await _context.Categories.FindAsync(id);
+                if (category == null) return NotFound();
+
+                category.Name = model.Name;
+                category.Description = model.Description;
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(categorys);
+            return View(model);
         }
 
         // GET: Categories/Delete/5
@@ -83,10 +89,10 @@ namespace Practice_Project.Controllers
             if (id == null) return NotFound();
 
             var category = await _context.Categories
+                .Include(c => c.Books)           // For book count in Delete view
                 .FirstOrDefaultAsync(c => c.CategoryId == id);
 
             if (category == null) return NotFound();
-
             return View(category);
         }
 
@@ -102,11 +108,6 @@ namespace Practice_Project.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(c => c.CategoryId == id);
         }
     }
 }

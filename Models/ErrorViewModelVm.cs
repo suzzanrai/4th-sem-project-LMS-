@@ -1,6 +1,6 @@
 namespace Practice_Project.Models;
 
-public class ErrorViewModel
+public class ErrorViewModelVm
 {
     public string? RequestId { get; set; }
 

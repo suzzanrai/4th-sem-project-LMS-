@@ -1,7 +1,9 @@
+// Controllers/BooksController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Practice_Project.Data;
+using Practice_Project.Entities;
 using Practice_Project.Models;
 
 namespace Practice_Project.Controllers
@@ -10,76 +12,59 @@ namespace Practice_Project.Controllers
     {
         private readonly LibraryDbContext _context;
 
-        public BooksController(LibraryDbContext context)
-        {
-            _context = context;
-        }
+        public BooksController(LibraryDbContext context) => _context = context;
 
-        // GET: Books
         public async Task<IActionResult> Index()
         {
-            var books = _context.Books
+            var books = await _context.Books
                 .Include(b => b.Author)
-                .Include(b => b.Category);
-            return View(await books.ToListAsync());
+                .Include(b => b.Category)
+                .OrderBy(b => b.Title)
+                .ToListAsync();
+
+            return View(books);
         }
 
-        // GET: Books/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // Add a default "Select" option to dropdowns
-            var authorItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Author --" } };
-            authorItems.AddRange(_context.Authors.Select(a => new SelectListItem { Value = a.AuthorId.ToString(), Text = a.Name }));
-
-            var categoryItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Category --" } };
-            categoryItems.AddRange(_context.Categories.Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.Name }));
-
-            ViewData["Authors"] = authorItems;
-            ViewData["Categories"] = categoryItems;
-
-            return View();
+            await LoadDropdowns();
+            return View(new BookViewModel());
         }
 
-        // POST: Books/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Books book)
+        public async Task<IActionResult> Create(BookViewModel model)
         {
-            // Optional: Add custom validation (e.g., QuantityAvailable <= TotalQuantity)
-            if (book.QuantityAvailable > book.TotalQuantity)
+            // Extra safety: prevent Available > Total
+            if (model.QuantityAvailable > model.TotalQuantity)
+                ModelState.AddModelError("QuantityAvailable", "Available copies cannot exceed total copies.");
+
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("QuantityAvailable", "Quantity Available cannot exceed Total Quantity.");
+                var book = new Book
+                {
+                    Title = model.Title,
+                    ISBN = model.ISBN,
+                    PublicationYear = model.PublicationYear,
+                    TotalQuantity = model.TotalQuantity,
+                    QuantityAvailable = model.QuantityAvailable,
+                    PublicationDate = model.PublicationDate.HasValue
+                        ? DateTime.SpecifyKind(model.PublicationDate.Value, DateTimeKind.Utc)
+                        : null,
+                    IsActive = model.IsActive,
+                    AuthorId = model.AuthorId,
+                    CategoryId = model.CategoryId
+                };
+
+                _context.Books.Add(book);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
 
-            if (!ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Add(book);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception (in a real app, use logging framework)
-                    ModelState.AddModelError("", $"An error occurred while saving: {ex.Message}");
-                }
-            }
-
-            // Repopulate dropdowns when validation fails, with selected values
-            var authorItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Author --" } };
-            authorItems.AddRange(_context.Authors.Select(a => new SelectListItem { Value = a.AuthorId.ToString(), Text = a.Name }));
-
-            var categoryItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Category --" } };
-            categoryItems.AddRange(_context.Categories.Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.Name }));
-
-            ViewData["Authors"] = new SelectList(authorItems, "Value", "Text", book.AuthorId.ToString());
-            ViewData["Categories"] = new SelectList(categoryItems, "Value", "Text", book.CategoryId.ToString());
-
-            return View(book);
+            await LoadDropdowns(model.AuthorId, model.CategoryId);
+            return View(model);
         }
 
-        // GET: Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -87,66 +72,59 @@ namespace Practice_Project.Controllers
             var book = await _context.Books.FindAsync(id);
             if (book == null) return NotFound();
 
-            // Add default "Select" for Edit as well, though usually not needed
-            var authorItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Author --" } };
-            authorItems.AddRange(_context.Authors.Select(a => new SelectListItem { Value = a.AuthorId.ToString(), Text = a.Name }));
+            var model = new BookViewModel
+            {
+                BookId = book.BookId,
+                Title = book.Title,
+                ISBN = book.ISBN,
+                PublicationYear = book.PublicationYear,
+                TotalQuantity = book.TotalQuantity,
+                QuantityAvailable = book.QuantityAvailable,
+                PublicationDate = book.PublicationDate,
+                IsActive = book.IsActive,
+                AuthorId = book.AuthorId,
+                CategoryId = book.CategoryId
+            };
 
-            var categoryItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Category --" } };
-            categoryItems.AddRange(_context.Categories.Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.Name }));
-
-            ViewData["Authors"] = new SelectList(authorItems, "Value", "Text", book.AuthorId.ToString());
-            ViewData["Categories"] = new SelectList(categoryItems, "Value", "Text", book.CategoryId.ToString());
-
-            return View(book);
+            await LoadDropdowns(model.AuthorId, model.CategoryId);
+            return View(model);
         }
 
-        // POST: Books/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Books book)
+        public async Task<IActionResult> Edit(int id, BookViewModel model)
         {
-            if (id != book.BookId) return NotFound();
+            if (id != model.BookId) return NotFound();
 
-            // Optional: Add custom validation
-            if (book.QuantityAvailable > book.TotalQuantity)
-            {
-                ModelState.AddModelError("QuantityAvailable", "Quantity Available cannot exceed Total Quantity.");
-            }
+            // Same safety check
+            if (model.QuantityAvailable > model.TotalQuantity)
+                ModelState.AddModelError("QuantityAvailable", "Available copies cannot exceed total copies.");
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(book);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookExists(book.BookId))
-                        return NotFound();
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"An error occurred while saving: {ex.Message}");
-                }
+                var book = await _context.Books.FindAsync(id);
+                if (book == null) return NotFound();
+
+                book.Title = model.Title;
+                book.ISBN = model.ISBN;
+                book.PublicationYear = model.PublicationYear;
+                book.TotalQuantity = model.TotalQuantity;
+                book.QuantityAvailable = model.QuantityAvailable;
+                book.PublicationDate = model.PublicationDate.HasValue
+                    ? DateTime.SpecifyKind(model.PublicationDate.Value, DateTimeKind.Utc)
+                    : null;
+                book.IsActive = model.IsActive;
+                book.AuthorId = model.AuthorId;
+                book.CategoryId = model.CategoryId;
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            // Repopulate dropdowns
-            var authorItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Author --" } };
-            authorItems.AddRange(_context.Authors.Select(a => new SelectListItem { Value = a.AuthorId.ToString(), Text = a.Name }));
-
-            var categoryItems = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select Category --" } };
-            categoryItems.AddRange(_context.Categories.Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.Name }));
-
-            ViewData["Authors"] = new SelectList(authorItems, "Value", "Text", book.AuthorId.ToString());
-            ViewData["Categories"] = new SelectList(categoryItems, "Value", "Text", book.CategoryId.ToString());
-
-            return View(book);
+            await LoadDropdowns(model.AuthorId, model.CategoryId);
+            return View(model);
         }
 
-        // GET: Books/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -157,11 +135,9 @@ namespace Practice_Project.Controllers
                 .FirstOrDefaultAsync(b => b.BookId == id);
 
             if (book == null) return NotFound();
-
             return View(book);
         }
 
-        // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -175,9 +151,15 @@ namespace Practice_Project.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(int id)
+        private async Task LoadDropdowns(int selectedAuthorId = 0, int selectedCategoryId = 0)
         {
-            return _context.Books.Any(b => b.BookId == id);
+            ViewBag.AuthorId = new SelectList(
+                await _context.Authors.OrderBy(a => a.Name).ToListAsync(),
+                "AuthorId", "Name", selectedAuthorId);
+
+            ViewBag.CategoryId = new SelectList(
+                await _context.Categories.OrderBy(c => c.Name).ToListAsync(),
+                "CategoryId", "Name", selectedCategoryId);
         }
     }
 }

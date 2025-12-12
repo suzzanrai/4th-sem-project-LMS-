@@ -1,0 +1,44 @@
+@model Practice_Project.Models.BookViewModel
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">Edit Book</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="BookId" />
+
+                        <!-- SAME FORM FIELDS AS CREATE (copy from above) -->
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="Title" class="form-label"></label>
+                                <input asp-for="Title" class="form-control form-control-lg" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="ISBN" class="form-label"></label>
+                                <input asp-for="ISBN" class="form-control form-control-lg" />
+                                <span asp-validation-for="ISBN" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- ... repeat all other fields exactly like Create.cshtml ... -->
+
+                        <div class="text-end mt-4">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@$1$section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}#1#*@

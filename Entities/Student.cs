@@ -27,6 +27,7 @@ namespace Practice_Project.Entities
         public bool IsActive { get; set; } = true;
 
         // One student → many book issues
+   
         public virtual ICollection<BookIssue> BookIssues { get; set; } = new List<BookIssue>();
     }
 }

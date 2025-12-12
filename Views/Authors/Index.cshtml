@@ -1,41 +1,40 @@
-@model IEnumerable<Practice_Project.Models.Authors>
+@model IEnumerable<Practice_Project.Entities.Author>
+@{
+    ViewData["Title"] = "Authors";
+}
 
-<h2>Authors List</h2>
-<hr />
+<h2>All Authors</h2>
 
-<a asp-action="Create" class="btn btn-primary mb-3">+ Add New Author</a>
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New Author</a>
+</p>
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-        <th>Author Name</th>
-        <th>Biography</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    @foreach (var item in Model)
-    {
+@if (!Model.Any())
+{
+    <p>No authors found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
         <tr>
-            <td>@item.Name</td>
-
-            <td>
-                @if (string.IsNullOrEmpty(item.Biography))
-                {
-                    <span class="text-muted">No Biography</span>
-                }
-                else
-                {
-                    @item.Biography
-                }
-            </td>
-
-            <td>
-               <a asp-action="Edit" asp-route-id="@item.AuthorId" class="btn btn-warning btn-sm">Edit</a>
-                <a asp-action="Delete" asp-route-id="@item.AuthorId" class="btn btn-danger btn-sm">Delete</a>
-            </td>
+            <th>Name</th>
+            <th>Biography</th>
+            <th>Actions</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (var author in Model)
+        {
+            <tr>
+                <td>@author.Name</td>
+                <td>@(string.IsNullOrEmpty(author.Biography) ? "No biography" : author.Biography)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@author.AuthorId" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@author.AuthorId" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Practice_Project.Models;
 
-public class Student
+public class StudentVm
 {
     [Key]
     public int StudentId { get; set; }
@@ -23,5 +23,5 @@ public class Student
     public bool IsActive { get; set; } = true;
     
     //Navigation 
-    public virtual ICollection<BookIssue> BookIssues { get; set; } = new List<BookIssue>();
+    public virtual ICollection<BookIssueViewModel> BookIssues { get; set; } = new List<BookIssueViewModel>();
 }
