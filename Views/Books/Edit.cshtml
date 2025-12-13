@@ -1,44 +1,94 @@
 @model Practice_Project.Models.BookViewModel
+
 @{
     ViewData["Title"] = "Edit Book";
 }
 
-<div class="container mt-5">
-    <h2 class="text-primary mb-4">Edit Book</h2>
+<h1 class="mb-4">Edit Book</h1>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <form asp-action="Edit" method="post">
-                        <input type="hidden" asp-for="BookId" />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <!-- SAME FORM FIELDS AS CREATE (copy from above) -->
-                        <div class="row">
-                            <div class="col-md-8 mb-3">
-                                <label asp-for="Title" class="form-label"></label>
-                                <input asp-for="Title" class="form-control form-control-lg" />
-                                <span asp-validation-for="Title" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label asp-for="ISBN" class="form-label"></label>
-                                <input asp-for="ISBN" class="form-control form-control-lg" />
-                                <span asp-validation-for="ISBN" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <!-- ... repeat all other fields exactly like Create.cshtml ... -->
+            <input type="hidden" asp-for="BookId" />
 
-                        <div class="text-end mt-4">
-                            <a asp-action="Index" class="btn btn-secondary btn-lg">Cancel</a>
-                            <button type="submit" class="btn btn-primary btn-lg px-5">Save Changes</button>
-                        </div>
-                    </form>
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ISBN" class="control-label"></label>
+                <input asp-for="ISBN" class="form-control" placeholder="13 digits only" />
+                <span asp-validation-for="ISBN" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="PublicationYear" class="control-label"></label>
+                        <input asp-for="PublicationYear" class="form-control" type="number" />
+                        <span asp-validation-for="PublicationYear" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="PublicationDate" class="control-label"></label>
+                        <input asp-for="PublicationDate" class="form-control" type="date" />
+                        <span asp-validation-for="PublicationDate" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="TotalQuantity" class="control-label"></label>
+                        <input asp-for="TotalQuantity" class="form-control" type="number" />
+                        <span asp-validation-for="TotalQuantity" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="QuantityAvailable" class="control-label"></label>
+                        <input asp-for="QuantityAvailable" class="form-control" type="number" />
+                        <span asp-validation-for="QuantityAvailable" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="AuthorId" class="control-label">Author</label>
+                        <select asp-for="AuthorId" class="form-control" asp-items="Model.Authors"></select>
+                        <span asp-validation-for="AuthorId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="CategoryId" class="control-label">Category</label>
+                        <select asp-for="CategoryId" class="form-control" asp-items="Model.Categories"></select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mb-3 form-check">
+                <input asp-for="IsActive" class="form-check-input" />
+                <label asp-for="IsActive" class="form-check-label"></label>
+            </div>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Save Changes" class="btn btn-primary me-2" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </div>
 
-@*@$1$section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}#1#*@
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

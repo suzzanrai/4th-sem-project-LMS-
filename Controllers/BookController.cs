@@ -65,6 +65,7 @@ namespace Practice_Project.Controllers
             return View(model);
         }
 
+        /*
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -74,6 +75,7 @@ namespace Practice_Project.Controllers
 
             var model = new BookViewModel
             {
+                
                 BookId = book.BookId,
                 Title = book.Title,
                 ISBN = book.ISBN,
@@ -96,35 +98,133 @@ namespace Practice_Project.Controllers
         {
             if (id != model.BookId) return NotFound();
 
-            // Same safety check
             if (model.QuantityAvailable > model.TotalQuantity)
                 ModelState.AddModelError("QuantityAvailable", "Available copies cannot exceed total copies.");
 
             if (ModelState.IsValid)
             {
-                var book = await _context.Books.FindAsync(id);
-                if (book == null) return NotFound();
+                try
+                {
+                    var book = await _context.Books.FindAsync(id);
+                    if (book == null) return NotFound();
 
-                book.Title = model.Title;
-                book.ISBN = model.ISBN;
-                book.PublicationYear = model.PublicationYear;
-                book.TotalQuantity = model.TotalQuantity;
-                book.QuantityAvailable = model.QuantityAvailable;
-                book.PublicationDate = model.PublicationDate.HasValue
-                    ? DateTime.SpecifyKind(model.PublicationDate.Value, DateTimeKind.Utc)
-                    : null;
-                book.IsActive = model.IsActive;
-                book.AuthorId = model.AuthorId;
-                book.CategoryId = model.CategoryId;
+                    book.Title = model.Title;
+                    book.ISBN = model.ISBN;
+                    book.PublicationYear = model.PublicationYear;
+                    book.TotalQuantity = model.TotalQuantity;
+                    book.QuantityAvailable = model.QuantityAvailable;
+                    book.PublicationDate = model.PublicationDate.HasValue
+                        ? DateTime.SpecifyKind(model.PublicationDate.Value, DateTimeKind.Utc)
+                        : null;
+                    book.IsActive = model.IsActive;
+                    book.AuthorId = model.AuthorId;
+                    book.CategoryId = model.CategoryId;
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+
+                {
+                    if (!BookExits (id)) return NotFound();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 
+            // THIS IS THE FIX – only 3 lines!
+           
             await LoadDropdowns(model.AuthorId, model.CategoryId);
+            ViewData["AuthorId"] = ViewBag.AuthorId;  // ← Delete this
+            ViewData["CategoryId"] = ViewBag.CategoryId;  // ← Delete this
             return View(model);
-        }
+        }*/
+        // Inside BooksController
 
+public async Task<IActionResult> Edit(int? id)
+{
+    if (id == null) return NotFound();
+
+    var book = await _context.Books.FindAsync(id);
+    if (book == null) return NotFound();
+
+    var model = new BookViewModel
+    {
+        BookId = book.BookId,
+        Title = book.Title,
+        ISBN = book.ISBN,
+        PublicationYear = book.PublicationYear,
+        TotalQuantity = book.TotalQuantity,
+        QuantityAvailable = book.QuantityAvailable,
+        PublicationDate = book.PublicationDate,
+        IsActive = book.IsActive,
+        AuthorId = book.AuthorId,
+        CategoryId = book.CategoryId
+    };
+
+    await LoadDropdownsAsync(model);
+    return View(model);
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(int id, BookViewModel model)
+{
+    if (id != model.BookId) return NotFound();
+
+    // Custom business rule
+    if (model.QuantityAvailable > model.TotalQuantity)
+        ModelState.AddModelError("QuantityAvailable", "Available copies cannot exceed total copies.");
+
+    if (ModelState.IsValid)
+    {
+        var book = await _context.Books.FindAsync(id);
+        if (book == null) return NotFound();
+
+        // Update all fields
+        book.Title = model.Title;
+        book.ISBN = model.ISBN;
+        book.PublicationYear = model.PublicationYear;
+        book.TotalQuantity = model.TotalQuantity;
+        book.QuantityAvailable = model.QuantityAvailable;
+        book.PublicationDate = model.PublicationDate.HasValue
+            ? DateTime.SpecifyKind(model.PublicationDate.Value, DateTimeKind.Utc)
+            : null;
+        book.IsActive = model.IsActive;
+        book.AuthorId = model.AuthorId;
+        book.CategoryId = model.CategoryId;
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    // IMPORTANT: Reload dropdowns when validation fails
+    await LoadDropdownsAsync(model);
+    return View(model);
+}
+
+// NEW: Clean helper that populates the ViewModel directly
+private async Task LoadDropdownsAsync(BookViewModel model)
+{
+    model.Authors = await _context.Authors
+        .OrderBy(a => a.Name)
+        .Select(a => new SelectListItem
+        {
+            Value = a.AuthorId.ToString(),
+            Text = a.Name,
+            Selected = a.AuthorId == model.AuthorId
+        })
+        .ToListAsync();
+
+    model.Categories = await _context.Categories
+        .OrderBy(c => c.Name)
+        .Select(c => new SelectListItem
+        {
+            Value = c.CategoryId.ToString(),
+            Text = c.Name,
+            Selected = c.CategoryId == model.CategoryId
+        })
+        .ToListAsync();
+}
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -160,6 +260,11 @@ namespace Practice_Project.Controllers
             ViewBag.CategoryId = new SelectList(
                 await _context.Categories.OrderBy(c => c.Name).ToListAsync(),
                 "CategoryId", "Name", selectedCategoryId);
+        }
+
+        private bool BookExits(int id)
+        {
+            return _context.Books.Any(e => e.BookId == id);
         }
     }
 }
