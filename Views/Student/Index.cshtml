@@ -1,64 +1,115 @@
-@model System.Collections.Generic.List<Practice_Project.Entities.Student>
+<!-- Views/Students/Index.cshtml -->
+@model IEnumerable<Practice_Project.Entities.Student>
 
 @{
-    ViewBag.Title = "Students";
-    Layout = "_Layout";
+    ViewData["Title"] = "Students";
 }
 
 <div class="container-fluid py-4">
-    <div class="d-flex flex-colum flex-md-row justify-content-between align-items-start align-item-md-center mb-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
             <h2 class="text-primary mb-1 fw-bold">
                 <i class="bi bi-person-badge-fill me-2"></i>Students Management
             </h2>
-            <p class="text-black-nuted mb-0">Total Students : <strong>@Model.Count()</strong></p>
+            <p class="text-muted mb-0">Total Students: <strong>@Model.Count()</strong></p>
         </div>
-        <a asp-action ="Create" class ="btn btn-success btn-lg shadow-sm">
-            <i class ="bi bi-person-plus-fill"></i>Add New Student
+        <a asp-action="Create" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-person-plus-fill"></i> Add New Student
         </a>
     </div>
-    
-    @*Search Box *@
+
+    <!-- Search Box -->
     <div class="card shadow-sm mb-4 border-0">
         <div class="card-body">
             <div class="input-group input-group-lg">
                 <span class="input-group-text bg-white border-end-0">
-                    <i class ="bi bi-search>"></i>
+                    <i class="bi bi-search"></i>
                 </span>
-                <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search by name, email, or roll number..." onkeyup="filterTable()" />            </div>
+                <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search by name, email, or roll number..." onkeyup="filterTable()" />
+            </div>
         </div>
     </div>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="studentsTable">
+            <thead class="table-primary">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Roll Number</th>
+                    <th>Status</th>
+                    <th>Books Issued</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.OrderBy(s => s.Name))
+                {
+                    <tr class="student-item">
+                        <td><strong>@student.StudentId</strong></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:45px;height:45px;font-size:1.2rem;">
+                                    @(student.Name.Split(' ').FirstOrDefault()?.First().ToString().ToUpper() ?? "S")
+                                </div>
+                                <div>
+                                    <strong>@student.Name</strong>
+                                    @if (!student.IsActive)
+                                    {
+                                        <span class="badge bg-secondary ms-2">Inactive</span>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td><a href="mailto:@student.Email" class="text-decoration-none">@student.Email</a></td>
+                        <td>@(string.IsNullOrEmpty(student.Phone) ? "<em class='text-muted'>No phone</em>" : student.Phone)</td>
+                        <td>@(string.IsNullOrEmpty(student.RollNumber) ? "<em class='text-muted'>—</em>" : student.RollNumber)</td>
+                        <td>
+                            <span class="badge @(student.IsActive ? "bg-success" : "bg-danger")">
+                                @(student.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info fs-6 px-3 py-2">@student.BookIssues.Count</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@student.StudentId" class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@student.StudentId" class="btn btn-danger btn-sm" title="Delete">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-people display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">No students registered yet</h4>
+            <p>Add your first student to get started!</p>
+        </div>
+    }
 </div>
 
-@*Responsive Table*@
-<div class="table-responsive">
-    <table class="talbe table-hover align-middle" id="studentsTable">
-        <thead class="table-primary">
-        <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>  Email </th>
-            <th> Phone  </th>
-            <th> Roll Number  </th>
-            <th>  Status </th>
-            <th>  Books Issued </th>
-            <th class="text-center"> Actions  </th>
-        </tr>
-        </thead>
-        
-        <tbody>
-        @foreach (var student in Model.OrderBy(s => s.Name))
-        {
-            <tr class="student-item">
-                <td><strong>@student.StudentId</strong></td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <div class="bg_primary text-white reouded-circle d-flex align-item-center jsutify-content-center me-3" style="Width:45px;height:45px;font-size:1.2rem;"></div>
-                        @(student.Name.Split(' ').FirstOrDefault()?.First().ToString().ToUpper().ToUpper()?? "S")
-                    </div>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+<script>
+    function filterTable() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll(".student-item");
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
