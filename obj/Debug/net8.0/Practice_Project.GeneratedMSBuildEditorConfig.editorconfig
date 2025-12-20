@@ -58,6 +58,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aG9yc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/BookIssue/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va0lzc3VlXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/BookIssue/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va0lzc3VlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/BookIssue/Return.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va0lzc3VlXFJldHVybi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/Books/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -92,6 +104,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/Student/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/Student/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/Student/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/BCA 4YEAR COURSE/4TH/10x software development course (15000)/Practice_Project/Practice_Project/Views/Student/Index.cshtml]

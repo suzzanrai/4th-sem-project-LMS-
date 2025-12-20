@@ -1,0 +1,59 @@
+@model IEnumerable<Practice_Project.Entities.BookIssue>
+
+@{
+    ViewData["Title"] = "Issued Books List";
+}
+
+<h2>Issued Books</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Issue New Book</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Book Title</th>
+        <th>Student Name</th>
+        <th>Issue Date</th>
+        <th>Due Date</th>
+        <th>Return Date</th>
+        <th>Status</th>
+        <th>Fine Amount</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Book.Title</td>
+            <td>@item.Student.Name</td>
+            <td>@item.IssueDate.ToString("dd-MM-yyyy")</td>
+            <td>@item.DueDate.ToString("dd-MM-yyyy")</td>
+            <td>
+                @if (item.ReturnDate.HasValue)
+                {
+                    @item.ReturnDate.Value.ToString("dd-MM-yyyy")
+                }
+                else
+                {
+                    <span>-</span>
+                }
+            </td>
+            <td>
+                <span class="badge @(item.Status == "Issued" ? "bg-warning" : "bg-success")">
+                    @item.Status
+                </span>
+            </td>
+            <td>@item.FineAmount.ToString("C")</td>
+            <td>
+                @if (item.Status == "Issued")
+                {
+                    <a asp-action="Return" asp-route-id="@item.Id" class="btn btn-sm btn-success">Return Book</a>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
