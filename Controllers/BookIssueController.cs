@@ -49,8 +49,8 @@ namespace Practice_Project.Controllers
                 {
                     BookId = vm.BookId,
                     StudentId = vm.StudentId,
-                    IssueDate = DateTime.Now,
-                    DueDate = DateTime.Now.AddDays(14),
+                    IssueDate = DateTime.UtcNow,
+                    DueDate = DateTime.UtcNow.AddDays(14),
                     Status = "Issued",
                     FineAmount = 0
                 };
@@ -91,7 +91,7 @@ namespace Practice_Project.Controllers
             if (issue == null)
                 return NotFound();
 
-            issue.ReturnDate = DateTime.Now;
+            issue.ReturnDate = DateTime.UtcNow;
             issue.Status = "Returned";
 
             if (issue.ReturnDate > issue.DueDate)

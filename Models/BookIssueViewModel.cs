@@ -23,6 +23,6 @@ public class BookIssueViewModel
     public decimal FineAmount { get; set; } = 0;
     
     //Navigation 
-    public virtual BookViewModel Bookvm { get; set; } = null!;
-    public virtual StudentVm StudentVm { get; set; } = null!;
+    /*public virtual BookViewModel Bookvm { get; set; } = null!;
+    public virtual StudentVm StudentVm { get; set; } = null!;*/
 }
