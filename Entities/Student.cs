@@ -7,6 +7,7 @@ namespace Practice_Project.Entities
         // CHANGED: StudentId → Id (only this line changed)
         [Key]
         public int Id { get; set; }
+        
 
         [Required]
         [StringLength(100)]
