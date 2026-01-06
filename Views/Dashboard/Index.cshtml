@@ -1,393 +1,114 @@
+@model Practice_Project.Models.DashboardViewModel
+
 @{
     ViewData["Title"] = "Dashboard";
+    string currentDate = DateTime.Today.ToString("dddd, MMMM dd, yyyy");
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <style>
-        /* Basic body and background styling */
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f4f1e8 0%, #e8e3d8 100%);
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+<div class="content">
+    <div class="main-content">
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            
-            background-size: cover;
-            background-position: center;
-            opacity: 1;
-            z-index: -1;
-        }
+        <!-- Header Card with Current Date -->
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-body text-center bg-gradient text-white py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h2 class="display-5 fw-bold mb-2">Library Dashboard</h2>
+                <p class="display-6 mb-1">@currentDate</p>
+                <small class="opacity-75">Welcome back! Everything is running smoothly.</small>
+            </div>
+        </div>
 
-        /* Top bar */
-        .top {
-           display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: #fff;
-            height: 50px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            
-        }
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-primary shadow-sm border-0 h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-people fs-2 me-3"></i>
+                        <div>
+                            <h4 class="mb-0">@Model.TotalStudents</h4>
+                            <small>Total Students</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        .logo {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1d1e1d;
-            transition: color 0.3s ease;
-            cursor: pointer;
-        }
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-success shadow-sm border-0 h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-book fs-2 me-3"></i>
+                        <div>
+                            <h4 class="mb-0">@Model.TotalBooks</h4>
+                            <small>Total Books</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        .right {
-            font-size: 14px;
-          
-        }
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-info shadow-sm border-0 h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-journal-text fs-2 me-3"></i>
+                        <div>
+                            <h4 class="mb-0">@Model.CurrentlyIssued</h4>
+                            <small>Currently Issued</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        .right a {
-            margin-left: 10px;
-            background-color: #0b0b95;
-            color: #fff;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-secondary shadow-sm border-0 h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-check-circle fs-2 me-3"></i>
+                        <div>
+                            <h4 class="mb-0">0</h4>
+                            <small>Overdue Books</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        .right a:hover {
-            border: 2px solid #030303;
-            
-        }
+        <!-- Additional Stats -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-book-half fs-1 text-success mb-3"></i>
+                        <h3 class="mb-0">@Model.AvailableBooks</h3>
+                        <p class="text-muted mb-0">Available Books</p>
+                    </div>
+                </div>
+            </div>
 
-        /* Main container with sidebar and content */
-        .main-container {
-            display: flex;
-            flex: 1;
-        }
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-pen fs-1 text-primary mb-3"></i>
+                        <h3 class="mb-0">@Model.TotalAuthors</h3>
+                        <p class="text-muted mb-0">Total Authors</p>
+                    </div>
+                </div>
+            </div>
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-currency-dollar fs-1 text-danger mb-3"></i>
+                        <h3 class="mb-0">@Model.TotalPendingFine</h3>
+                        <p class="text-muted mb-0">Pending Fines</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            color: #333;
-            text-decoration: none;
-            padding: 15px 20px;
-            margin: 10px 0;
-            width: 80%;
-            border-radius: 8px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            font-size: 16px;
-            font-weight: 500;
-        }
+        <!-- Success Message (Replacing Overdue List) -->
+        <div class="card shadow-lg border-0">
+            <div class="card-body text-center py-5 bg-light">
+                <i class="bi bi-check-circle-fill fs-1 text-success mb-4"></i>
+                <h3 class="text-success fw-bold">All Books Are On Time!</h3>
+                <p class="text-muted lead">No overdue books detected. Excellent management!</p>
+            </div>
+        </div>
 
-        .sidebar a .icon {
-            margin-right: 15px;
-            font-size: 20px;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background-color: #0b0b95;
-            color: #fff;
-        }
-
-        /* Main content area */
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            
-        }
-
-        .dashboard {
-            background: rgba(255, 255, 255, 0.82);
-            padding: 40px;
-            width: 100%;
-            max-width: 1200px;
-            height: 100%;
-            text-align: center;
-        }
-
-
-        /* Search section */
-        .search-section {
-            margin-bottom: 50px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .search-input {
-            width: 100%;
-            max-width: 400px;
-            padding: 12px 20px;
-            border: 2px solid #030303;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .search-input:focus {
-            border-color: #1d1c1c;
-            outline: none;
-        }
-
-        .search-button, .reset-button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .search-button {
-            background-color: #0b0b95;
-            color: #fff;
-            
-        }
-
-        .search-button:hover {
-             border: 2px solid #030303;
-        }
-
-        .reset-button {
-            background-color: #0b0b95;
-            color: #fcfafa;
-        }
-
-        .reset-button:hover {
-            border: 2px solid #030303;
-        }
-
-        /* Table section */
-        .table-section {
-            width: 100%;
-        }
-
-        .table-section h2 {
-            font-size: 20px;
-            font-weight: 500;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #ffffff;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-table th, .data-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            border-right: 1px solid #ddd;
-        }
-
-        .data-table th {
-            background: linear-gradient(135deg, #1d1c1c 0%, #2c2c2c 100%);
-            color: #fff;
-            font-weight: 700;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .data-table th:last-child, .data-table td:last-child {
-            border-right: none;
-        }
-
-        .data-table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .data-table tbody tr:nth-child(odd) {
-            background-color: #ffffff;
-        }
-
-        .data-table td {
-            color: #333;
-            font-weight: 400;
-        }
-
-        .data-table td:first-child {
-            font-weight: 600;
-            color: #1d1c1c;
-            text-align: center;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: auto;
-            padding: 20px;
-            background: #2c3e50;
-            color: #fff;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .footer a {
-            color: #d88b5c;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive design */
-        @BodyContent (max-width: 1024px) {
-            .sidebar {
-                width: 220px;
-            }
-            .content {
-                padding: 30px;
-            }
-        }
-
-        @BodyContent (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                padding: 10px 0;
-            }
-            .sidebar a {
-                width: 90%;
-                padding: 18px 20px; /* Larger tap targets */
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            .welcome {
-                font-size: 20px;
-            }
-            .data-table {
-                font-size: 14px;
-            }
-            .data-table th, .data-table td {
-                padding: 10px;
-            }
-            .search-section {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .search-input {
-                max-width: 100%;
-            }
-        }
-
-        @BodyContent (max-width: 480px) {
-            .top {
-                padding: 10px 20px;
-            }
-            .logo {
-                font-size: 20px;
-            }
-            .right a {
-                padding: 10px 15px;
-                font-size: 12px;
-            }
-            .dashboard {
-                padding: 20px;
-            }
-            .data-table {
-                overflow-x: auto;
-                display: block;
-                white-space: nowrap;
-            }
-        }
-    </style>
-</head>
-<body>
-   
-<div class="top">
-    <div class="logo">Library Management System</div>
-    <div class="right">
-        <a asp-controller="Account" asp-action="Logout">LOG OUT</a>
     </div>
 </div>
-
-<div class="main-container">
-   
-   
-    
-    <div class="sidebar" id="sidebar">
-       
-
-        <a asp-controller="Student" asp-action="Index" class="active">
-            <span class="icon">📊</span>
-            Student
-        </a>
-
-        <a asp-controller="Authors" asp-action="Index">
-            <span class="icon">👥</span>
-            Authors
-        </a>
-
-        <a asp-controller="Categories" asp-action="Index">
-            <span class="icon">🏷️</span>
-            Categories
-        </a>
-        <a asp-controller="Books" asp-action="Index">
-            <span class="icon">📚</span>
-            Books
-        </a>
-        <a asp-controller="BookIssue" asp-action="Index">
-            <span class="icon">🔄</span>
-            Book Issue
-        </a>
-        <a asp-controller="Fine" asp-action="Index">
-            <span class="icon">💰</span>
-            Fine
-        </a>
-    </div>
-    
-    
-    
-   
-  
-    
-    
-</div>
-        
-    
-
-    <div class="footer">
-        &copy; 2025 Library Management System. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-    </div>
-</body>
-</html>
