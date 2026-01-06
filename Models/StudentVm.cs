@@ -18,7 +18,7 @@ public class StudentVm
     [Phone]
     public string? Phone { get; set; } = string.Empty;
     
-    public string? RollNumber { get; set; }
+    public int RollNumber { get; set; }
 
     public bool IsActive { get; set; } = true;
     

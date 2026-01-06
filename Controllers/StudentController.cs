@@ -35,27 +35,13 @@ public class StudentController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Auto-generate RollNumber as 1, 2, 3...
-            int nextRollNumber = 1;
-            var lastStudent = await _context.Students
-                .OrderByDescending(s => s.RollNumber)
-                .FirstOrDefaultAsync();
-
-            if (lastStudent != null)
-            {
-                // If RollNumber is numeric, increment
-                if (int.TryParse(lastStudent.RollNumber, out int lastNumber))
-                {
-                    nextRollNumber = lastNumber + 1;
-                }
-            }
-
+         
             var student = new Student
             {
                 Name = model.Name,
                 Email = model.Email,
                 Phone = model.Phone,
-                RollNumber = nextRollNumber.ToString(), // assign numeric RollNumber
+              //  RollNumber = nextRollNumber.ToString(), // assign numeric RollNumber
              //   IsActive = model.IsActive,
             };
 

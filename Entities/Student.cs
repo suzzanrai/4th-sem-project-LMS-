@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Practice_Project.Entities
 {
@@ -21,8 +22,8 @@ namespace Practice_Project.Entities
         [StringLength(20)]
         public string? Phone { get; set; }
 
-        [StringLength(30)]
-        public string? RollNumber { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int RollNumber { get; set; }
 
         public bool IsActive { get; set; } = true;
 
