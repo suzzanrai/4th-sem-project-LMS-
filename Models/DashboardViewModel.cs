@@ -15,6 +15,8 @@ namespace Practice_Project.Models
         public int TotalCategories { get; set; }
         public int CurrentlyIssued { get; set; }
         public int AvailableBooks { get; set; }
+        
+        public int AvailableBookList { get; set; }
         public int OverdueCount { get; set; }
         public string TotalPendingFine { get; set; } = "$0.00";
 

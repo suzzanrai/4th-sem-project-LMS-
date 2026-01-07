@@ -158,12 +158,7 @@
 
 <div class="top">
     <div class="logo">Library Management System</div>
-    <div class="right">
-        @if (User.Identity.IsAuthenticated)
-        {
-        <a asp-controller="Account" asp-action="Logout">LOG OUT</a>
-        }
-    </div>
+   
 </div>
 
 <div class="main-container">
@@ -204,15 +199,20 @@
            class="@(Context.Request.Path.StartsWithSegments("/Pay") ? "active" : "")">
             <span class="icon">💰</span> Fine
         </a>
-
+        
+        <a asp-controller="Account" asp-action="Logout"
+           class="@(Context.Request.Path.StartsWithSegments("/Auth/Logout") ? "active" : "")">
+        <span class="icon"></span> Logout
+        </a>
         @if (User.IsInRole("Admin"))
         {
-        <a asp-controller="Auth" asp-action="Register"
-           class="@(Context.Request.Path.StartsWithSegments("/Auth/Register") ? "active" : "")">
-            <span class="icon">👤</span> Register Staff
-        </a>
+            <a asp-controller="Auth" asp-action="Register"
+               class="@(Context.Request.Path.StartsWithSegments("/Auth/Register") ? "active" : "")">
+                <span class="icon">👤</span> Register Staff
+            </a>
         }
         }
+       
     </div>
 
     <div class="content">

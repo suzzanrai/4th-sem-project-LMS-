@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Practice_Project.Data;
-using Practice_Project.Entities;
+
 using Practice_Project.Models;
 
 namespace Practice_Project.Controllers
@@ -34,10 +34,23 @@ namespace Practice_Project.Controllers
             model.CurrentlyIssued = issuedCount;
             model.AvailableBooks = model.TotalBooks - issuedCount;
 
-            // Since overdue list is removed, we set these to 0
-            model.OverdueCount = 0;
-            model.TotalPendingFine = "$0.00";
+        //overdue
+           var overdueIssues = await _context.BookIssues
+               .Where(bi=> bi.ReturnDate == null && bi.DueDate < DateTime.UtcNow)
+               .ToListAsync();
 
+           model.OverdueCount = overdueIssues.Count;
+
+           decimal totalFine = 0;
+           foreach (var issue in overdueIssues)
+           {
+               int daysOverdue = (DateTime.Now - issue.DueDate).Days;
+               totalFine += daysOverdue * 5.0m;
+           }
+
+           model.TotalPendingFine = $"${totalFine:F2}";
+           
+         
             return View(model);
         }
     }
