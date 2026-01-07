@@ -4,11 +4,13 @@
     ViewData["Title"] = "Students List";
 }
 
-<h2>Students Management</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold">Students Management</h2>
+    <a asp-action="Create" class="btn btn-success btn-lg">
+        Add New Students
+    </a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add New Student</a>
-</p>
 
 <table class="table table-striped table-hover">
     <thead class="table-dark">

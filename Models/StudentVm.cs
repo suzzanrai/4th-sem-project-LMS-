@@ -15,9 +15,10 @@ public class StudentVm
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
     
-    [Phone]
-    public string? Phone { get; set; } = string.Empty;
-    
+    [Required(ErrorMessage = "Phone number is required.")]
+    [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+    public string Phone { get; set; }
+
     public int RollNumber { get; set; }
 
     public bool IsActive { get; set; } = true;

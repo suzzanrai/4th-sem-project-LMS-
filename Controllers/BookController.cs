@@ -1,4 +1,3 @@
-// Controllers/BooksController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +36,6 @@ namespace Practice_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookViewModel model)
         {
-            // Extra safety: prevent Available > Total
             if (model.QuantityAvailable > model.TotalQuantity)
                 ModelState.AddModelError("QuantityAvailable", "Available copies cannot exceed total copies.");
 
