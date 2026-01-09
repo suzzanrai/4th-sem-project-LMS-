@@ -2,12 +2,11 @@
 @using System.Security.Claims
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-
 @{
     // Current time in Nepal (Asia/Kathmandu)
     var nepalTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time");
     var currentNepalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, nepalTimeZone);
-    var formattedTime = currentNepalTime.ToString("dddd, MMMM dd, yyyy ", CultureInfo.InvariantCulture);
+    var formattedTime = currentNepalTime.ToString("dddd, MMMM dd, yyyy", CultureInfo.InvariantCulture);
 
     // User info for profile
     var userName = User.Identity.IsAuthenticated && User.FindFirst(ClaimTypes.Name)?.Value != null
@@ -71,24 +70,86 @@
             color: #1d1e1d;
         }
 
-        .right a {
-            background-color: #0b0b95;
-            color: #fff;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+        .top-center {
+            font-size: 1.15rem;
+            color: #333;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             transition: all 0.3s ease;
         }
 
-        .right a:hover {
-            border: 2px solid #030303;
+        .profile-top:hover {
+            transform: translateY(-2px);
+        }
+
+        .profile-avatar-large {
+            width: 55px;
+            height: 55px;
+            font-size: 26px;
+            background-color: #0b0b95;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(11, 11, 149, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar-large:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(11, 11, 149, 0.4);
+        }
+
+        .profile-info .small {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        .profile-info .fw-bold {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* Logout button style */
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            margin: 130px auto 0px ; /* Big top margin to separate */
+            padding: 12px 20px;
+            background: transparent;
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+         
+        }
+
+        .logout-btn:hover {
+            background: #dc3545;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
         }
 
         .main-container {
             display: flex;
             flex: 1;
             margin-top: 70px;
-            margin-left: 250px; /* Space for fixed sidebar */
+            margin-left: 250px;
         }
 
         .sidebar {
@@ -107,13 +168,13 @@
             z-index: 900;
         }
 
-        .sidebar a {
+        .sidebar a:not(.logout-btn) {
             display: flex;
             align-items: center;
             color: #333;
             text-decoration: none;
             padding: 10px 15px;
-            margin: 5px 0;
+            margin: 5px 0; /* Default margin for all normal links */
             width: 80%;
             border-radius: 8px;
             transition: all 0.3s ease;
@@ -126,9 +187,9 @@
             font-size: 20px;
         }
 
-        .sidebar a:hover,
+        .sidebar a:hover:not(.logout-btn),
         .sidebar a.active {
-            background-color: #0b0b95;
+            background-color: #1e3c72;
             color: #fff;
         }
 
@@ -150,8 +211,6 @@
             box-sizing: border-box;
         }
 
-       
-
         .footer {
             padding: 20px;
             background: #2c3e50;
@@ -168,96 +227,80 @@
         .footer a:hover {
             text-decoration: underline;
         }
-        .search-box{
-            font-size: 20px;
-            border: solid 0.3em #000000;
-            display: inline-block;
-            position: relative;
-            border-radius: 2.5em;
-        }
     </style>
 </head>
 <body>
 
 <div class="top">
     <div class="logo">Library Management System</div>
-   
-    @*<div class="flex-grow-1" style="max-width: 350px;">
-        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"
-               class="form-control" placeholder="Search by Student Name" />
-    </div>
-    <div>
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>*@
-    
+
     <div class="top-center">
-        @*🕒*@ @formattedTime
+         @formattedTime
     </div>
-    
-    @*<!-- Right: Profile Section -->
-    <div class="profile-section">
-        <div class="profile-info">
-            <div class="profile-greeting">Hello,</div>
-            <div class="profile-name">@firstName</div>
-        </div>
-        <div class="profile-avatar">
+
+    <div class="profile-top">
+        <div class="profile-avatar-large">
             @firstLetter
         </div>
-    </div>*@
+        <div class="profile-info">
+            <div class="fw-medium">Hello,</div>
+            <div class="fw-bold">@firstName</div>
+        </div>
+    </div>
 </div>
 
 <div class="main-container">
     <div class="sidebar">
         @if (User.Identity.IsAuthenticated)
         {
-        <a asp-controller="Dashboard" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/Dashboard") ? "active" : "")">
-            <span class="icon">📊</span> Dashboard
-        </a>
+            <a asp-controller="Dashboard" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/Dashboard") ? "active" : "")">
+                <span class="icon">📊</span> Dashboard
+            </a>
 
-        <a asp-controller="Student" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/Student") ? "active" : "")">
-            <span class="icon">👨‍🎓</span> Student
-        </a>
+            <a asp-controller="Student" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/Student") ? "active" : "")">
+                <span class="icon">👨‍🎓</span> Student
+            </a>
 
-        <a asp-controller="Authors" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/Authors") ? "active" : "")">
-            <span class="icon">✍️</span> Authors
-        </a>
+            <a asp-controller="Authors" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/Authors") ? "active" : "")">
+                <span class="icon">✍️</span> Authors
+            </a>
 
-        <a asp-controller="Categories" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/Categories") ? "active" : "")">
-            <span class="icon">🏷️</span> Categories
-        </a>
+            <a asp-controller="Categories" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/Categories") ? "active" : "")">
+                <span class="icon">🏷️</span> Categories
+            </a>
 
-        <a asp-controller="Books" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/Books") ? "active" : "")">
-            <span class="icon">📚</span> Books
-        </a>
+            <a asp-controller="Books" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/Books") ? "active" : "")">
+                <span class="icon">📚</span> Books
+            </a>
 
-        <a asp-controller="BookIssue" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/BookIssue") ? "active" : "")">
-            <span class="icon">🔄</span> Book Issue
-        </a>
+            <a asp-controller="BookIssue" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/BookIssue") ? "active" : "")">
+                <span class="icon">🔄</span> Book Issue
+            </a>
 
-        <a asp-controller="Pay" asp-action="Index"
-           class="@(Context.Request.Path.StartsWithSegments("/Pay") ? "active" : "")">
-            <span class="icon">💰</span> Fine
-        </a>
-        
-        
-        <a asp-controller="Account" asp-action="Logout"
-           class="@(Context.Request.Path.StartsWithSegments("/Auth/Logout") ? "active" : "")">
-            <span class="icon">⬅️</span>Logout</a>
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-controller="Auth" asp-action="Register"
-               class="@(Context.Request.Path.StartsWithSegments("/Auth/Register") ? "active" : "")">
-                <span class="icon">👤</span> Register Staff
+            <a asp-controller="Pay" asp-action="Index"
+               class="@(Context.Request.Path.StartsWithSegments("/Pay") ? "active" : "")">
+                <span class="icon">💰</span> Fine
+            </a>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Auth" asp-action="Register"
+                   class="@(Context.Request.Path.StartsWithSegments("/Auth/Register") ? "active" : "")">
+                    <span class="icon">👤</span> Register Staff
+                </a>
+            }
+
+            <!-- Logout button - separated and at the bottom -->
+            <a asp-controller="Account" asp-action="Logout" class="logout-btn">
+                <span class="me-2">⬅️</span> Logout
             </a>
         }
-        }
-       
     </div>
 
     <div class="content">
