@@ -28,22 +28,37 @@ public class StudentController : Controller
         return View(model);
     }
 
-    //Student-Create
+    //Create sutdent
     [HttpPost]
     [ValidateAntiForgeryToken]
-
     public async Task<IActionResult> Create(StudentVm model)
     {
         if (ModelState.IsValid)
         {
+            // Auto-generate RollNumber as 1, 2, 3...
+            int nextRollNumber = 1;
+            var lastStudent = await _context.Students
+                .OrderByDescending(s => s.RollNumber)
+                .FirstOrDefaultAsync();
+
+            if (lastStudent != null)
+            {
+                // If RollNumber is numeric, increment
+                if (int.TryParse(lastStudent.RollNumber, out int lastNumber))
+                {
+                    nextRollNumber = lastNumber + 1;
+                }
+            }
+
             var student = new Student
             {
                 Name = model.Name,
                 Email = model.Email,
                 Phone = model.Phone,
-                RollNumber = model.RollNumber,
-                IsActive = model.IsActive,
+                RollNumber = nextRollNumber.ToString(), // assign numeric RollNumber
+             //   IsActive = model.IsActive,
             };
+
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -51,6 +66,7 @@ public class StudentController : Controller
 
         return View(model);
     }
+
     
     //Get Student for Edit
     public async Task<IActionResult> Edit(int? id)
@@ -71,8 +87,8 @@ public class StudentController : Controller
             StudentId = student.Id,
             Name = student.Name,
             Email = student.Email,
-            RollNumber = student.RollNumber,
-            IsActive = student.IsActive
+           Phone = student.Phone,
+          //  IsActive = student.IsActive
         };
         return View(model);
     }
@@ -98,7 +114,7 @@ public class StudentController : Controller
             student.Email = model.Email;
             student.Phone = model.Phone;
             student.RollNumber = model.RollNumber;
-            student.IsActive = model.IsActive;  
+         //   student.IsActive = model.IsActive;  
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

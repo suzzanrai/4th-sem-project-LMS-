@@ -55,6 +55,8 @@
                         <td>@fine.BookIssue?.DueDate.ToString("dd MMM yyyy")</td>
                         <td>@(fine.BookIssue?.ReturnDate.HasValue == true ? fine.BookIssue.ReturnDate.Value.ToString("dd MMM yyyy") : "-")</td>
                         <td>Rs. @fine.Amount</td>
+                        
+                        
                         <td>
                             <span class="badge bg-success">Paid</span>
                         </td>

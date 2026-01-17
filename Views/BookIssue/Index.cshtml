@@ -64,8 +64,8 @@
                         <tr>
                             <td><strong>@item.Book.Title</strong><br /><small>by @item.Book.Author</small></td>
                             <td>@item.Student.Name</td>
-                            <td>@item.IssueDate:dd MMM yyyy</td>
-                            <td>@item.DueDate:dd MMM yyyy</td>
+                            <td>@item.IssueDate</td>
+                            <td>@item.DueDate</td>
                             <td>
                                 @if (item.Status == "Returned")
                                 {
@@ -95,7 +95,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">Returned on @item.ReturnDate.Value:dd MMM yyyy</span>
+                                    <span class="text-muted">Returned on @item.ReturnDate.Value</span>
                                 }
                             </td>
                         </tr>
