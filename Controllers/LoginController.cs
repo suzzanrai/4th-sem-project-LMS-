@@ -28,7 +28,7 @@ namespace Practice_Project.Controllers
         {
             if (User.Identity?.IsAuthenticated == true)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
 
             return View();
@@ -76,7 +76,7 @@ namespace Practice_Project.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // GET: /Account/Register (Only Admin can register new librarians/admins)

@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+﻿@*@using System.Security.Claims
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,6 +107,279 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>*@
+
+@using System.Security.Claims
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Management</title>
+
+    <!-- REMOVED BOOTSTRAP TO AVOID STYLE CONFLICTS -->
+     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> 
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        /* Your exact original design */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f4f1e8 0%, #e8e3d8 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 1;
+            z-index: -1;
+        }
+
+        /* Fixed Top Bar */
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            background: #fff;
+            height: 70px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d1e1d;
+        }
+
+        .right a {
+            background-color: #0b0b95;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .right a:hover {
+            border: 2px solid #030303;
+        }
+
+        /* Main layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            margin-top: 70px;     /* Below fixed top bar */
+            margin-left: 250px;   /* Right of fixed sidebar */
+        }
+
+        /* Fixed Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            z-index: 900;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: #333;
+            text-decoration: none;
+            padding: 15px 20px;
+            margin: 10px 0;
+            width: 80%;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .sidebar a .icon {
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #0b0b95;
+            color: #fff;
+        }
+
+        /* Scrollable Content Area */
+        .content {
+            flex: 1;
+            padding: 40px 20px;
+            overflow-y: auto;
+            height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dashboard {
+            background: rgba(255, 255, 255, 0.82);
+            padding: 40px;
+            width: 100%;
+            max-width: 1200px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 100%;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px;
+            background: #2c3e50;
+            color: #fff;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #d88b5c;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+     /*   !* Responsive *!
+         (max-width: 1024px) {
+            .sidebar { width: 220px; }
+            .main-container { margin-left: 220px; }
+        }
+
+         (max-width: 768px) {
+            .top { padding: 10px 20px; }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                top: 0;
+            }
+            .main-container {
+                flex-direction: column;
+                margin-left: 0;
+            }
+            .sidebar a { width: 90%; justify-content: center; }
+            .content { padding: 20px; height: auto; }
+        }
+
+        (max-width: 480px) {
+            .logo { font-size: 20px; }
+            .right a { padding: 8px 12px; font-size: 12px; }
+            .dashboard { padding: 20px; }
+        }*/
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top">
+        <div class="logo">Library Management System</div>
+        <div class="right">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Account" asp-action="Logout">LOG OUT</a>
+            }
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Student" asp-action="Index"
+                   class="@(Context.Request.Path.StartsWithSegments("/Student") ? "active" : "")">
+                    <span class="icon">📊</span> Student
+                </a>
+
+                <a asp-controller="Authors" asp-action="Index"
+                   class="@(Context.Request.Path.StartsWithSegments("/Authors") ? "active" : "")">
+                    <span class="icon">👥</span> Authors
+                </a>
+
+                <a asp-controller="Categories" asp-action="Index"
+                   class="@(Context.Request.Path.StartsWithSegments("/Categories") ? "active" : "")">
+                    <span class="icon">🏷️</span> Categories
+                </a>
+
+                <a asp-controller="Books" asp-action="Index"
+                   class="@(Context.Request.Path.StartsWithSegments("/Books") ? "active" : "")">
+                    <span class="icon">📚</span> Books
+                </a>
+
+                <a asp-controller="BookIssue" asp-action="Index"
+                   class="@(Context.Request.Path.StartsWithSegments("/BookIssue") ? "active" : "")">
+                    <span class="icon">🔄</span> Book Issue
+                </a>
+
+                <a asp-controller="Pay" asp-action="Index"
+                   class="@(Context.Request.Path.StartsWithSegments("/Pay") ? "active" : "")">
+                    <span class="icon">💰</span> Fine
+                </a>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Auth" asp-action="Register"
+                       class="@(Context.Request.Path.StartsWithSegments("/Auth/Register") ? "active" : "")">
+                        <span class="icon">👤</span> Register Staff
+                    </a>
+                }
+            }
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <div class="dashboard">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2025 Library Management System. All rights reserved. | 
+        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+    </div>
+
+    <!-- Keep jQuery if needed, remove Bootstrap JS -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> 
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
