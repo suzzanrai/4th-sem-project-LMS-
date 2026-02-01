@@ -13,14 +13,19 @@
         <input class="form-control"
                type="text"
                name="searchString"
-               placeholder="Search "
+               placeholder="Search by Student Name"
                aria-label="Search"
                value="@ViewData["CurrentFilter"]"/>
 
         <button class="btn btn-outline-success" type="submit">
             Search
         </button>
-    </form>
+      
+
+        <a asp-action="Index" class="btn btn-outline-success">
+            Reset
+        </a>
+    </form>  
     
     
     <a asp-action="Create" class="btn btn-success btn-lg">

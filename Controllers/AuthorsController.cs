@@ -20,14 +20,28 @@ namespace Practice_Project.Controllers
         }
 
         // GET: Authors → List all authors (with book count)
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            // Manual SQL for PostgreSQL (quoted table & column names)
-            var authors = await _context.Authors
-                .FromSqlRaw("SELECT * FROM \"Authors\" ORDER BY \"Name\"")
-                .ToListAsync();
+            // Base SQL query for authors
+            string sql = "SELECT * FROM \"Authors\"";
 
-            // Load books for each author manually to get book count
+            // Add WHERE clause if searchString is provided
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                // Use parameterized query to prevent SQL injection
+                sql += " WHERE \"Name\" ILIKE {0}"; // ILIKE for case-insensitive search in PostgreSQL
+                searchString = $"%{searchString}%";
+            }
+
+            // Always order by Name
+            sql += " ORDER BY \"Name\"";
+
+            // Execute query
+            var authors = string.IsNullOrEmpty(searchString)
+                ? await _context.Authors.FromSqlRaw(sql).ToListAsync()
+                : await _context.Authors.FromSqlRaw(sql, searchString).ToListAsync();
+
+            // Load books for each author to get book count
             foreach (var author in authors)
             {
                 author.Books = await _context.Books
@@ -37,6 +51,7 @@ namespace Practice_Project.Controllers
 
             return View(authors);
         }
+
 
         // GET: Authors/Create
         public IActionResult Create()

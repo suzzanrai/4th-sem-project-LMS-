@@ -66,7 +66,7 @@ namespace Practice_Project.Controllers
                         BookId = vm.BookId,
                         StudentId = vm.StudentId,
                         IssueDate = DateTime.UtcNow,
-                        DueDate = DateTime.UtcNow.AddDays(14), // or keep 1 day for testing
+                        DueDate = DateTime.UtcNow.AddDays(2), // or keep 1 day for testing
                         Status = "Issued",
                         FineAmount = 0
                     };

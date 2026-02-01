@@ -48,7 +48,7 @@ namespace Practice_Project.Controllers
                totalFine += daysOverdue * 5.0m;
            }
 
-           model.TotalPendingFine = $"${totalFine:F2}";
+           model.TotalPendingFine = $"₹{totalFine:F2}";
            
          
             return View(model);

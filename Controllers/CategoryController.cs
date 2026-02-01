@@ -14,15 +14,26 @@ namespace Practice_Project.Controllers
         public CategoriesController(LibraryDbContext context) => _context = context;
 
         // GET: Categories
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var categories = await _context.Categories
-                .Include(c => c.Books)           // For book count in Index & Delete
-                .OrderBy(c => c.Name)
-                .ToListAsync();
+            // Start with all categories
+            var categories = _context.Categories
+                .Include(c => c.Books) // Keep book count
+                .AsQueryable();
 
-            return View(categories);
+            // Filter by Category Name
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                categories = categories.Where(c =>
+                    c.Name.Contains(searchString));
+            }
+
+            // Order by Name
+            categories = categories.OrderBy(c => c.Name);
+
+            return View(await categories.ToListAsync());
         }
+
 
         // GET: Categories/Create
         public IActionResult Create() => View(new CategoryViewModel());

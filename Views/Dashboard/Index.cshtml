@@ -3,20 +3,53 @@
 @{
     ViewData["Title"] = "Library Dashboard";
 }
+<style>
+    .slide-in {
+        animation: slideFromLeft 1.2s ease-out forwards;
+    }
 
-<div class="container-fluid mt-3">
+    .fade-in {
+        animation: fadeIn 1.6s ease-in forwards;
+    }
+
+    @@keyframes slideFromLeft {
+        from {
+            transform: translateX(-100px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+<div class="container-fluid mt-2">
     <!-- Welcome Section -->
     <div class="row justify-content-center mb-2">
-        <div class="col-110 text-center">
-            <h1 class="display-4 text-primary">Welcome to Our Library Dashboard</h1>
-   
+        <div class="col-15 text-center">
+
+            <h1 class="display-6 text-primary slide-in">
+                Welcome to Your Library Dashboard !
+            </h1>
+            <p class="lead text-muted fade-in">
+                Monitor your Library Details
+            </p>
+
+            
         </div>
     </div>
+
 
     <!-- Dashboard Metrics Cards -->
     <div class="row justify-content-center">
         <!-- Total Students -->
-        <div class="col-lg-3 col-md-6 mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
             <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-people-fill text-info" style="font-size: 3rem;"></i>
@@ -93,7 +126,7 @@
     </div>
 
     <!-- Footer Encouragement -->
-    <div class="row justify-content-center mt-4">
+    <div class="row justify-content-center mt-2">
         <div class="col-12 text-center">
             <p class="text-muted">Thank you for being part of our library community. Let's keep the pages turning and minds expanding!</p>
         </div>

@@ -13,18 +13,29 @@ namespace Practice_Project.Controllers
 
         public BooksController(LibraryDbContext context) => _context = context;
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var books = await _context.Books
+            // Start with all books
+            var books = _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Category)
-                .OrderBy(b => b.Title)
-                .ToListAsync();
+                .AsQueryable();
 
-            
-            
-            return View(books);
+            // Filter by Book Title, Author Name, or Category Name
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(b =>
+                    b.Title.Contains(searchString) ||
+                    b.Author.Name.Contains(searchString) ||
+                    b.Category.Name.Contains(searchString));
+            }
+
+            // Order by Title
+            books = books.OrderBy(b => b.Title);
+
+            return View(await books.ToListAsync());
         }
+
 
         public async Task<IActionResult> Create()
         {
